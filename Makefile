@@ -4,7 +4,7 @@ test:
 	go test ./...
 
 demo:
-	go run ./cmd/recon -mode demo -out ./out
+	go run ./cmd/recon demo --out ./out
 
 build:
 	mkdir -p bin

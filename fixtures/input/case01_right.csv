@@ -1,0 +1,5 @@
+id,date,amount,description
+L001,2026-01-01,100.00,Deposit A
+L002,2026-01-02,-25.50,Payment B
+R010,2026-01-05,-5.00,Fee
+L004,2026-01-04,50.00,Refund
