@@ -1,0 +1,21 @@
+{
+  "schema_version": "v0",
+  "rule": "exact_id",
+  "left_count": 4,
+  "right_count": 4,
+  "matched_count": 3,
+  "unmatched_left_count": 1,
+  "unmatched_right_count": 1,
+  "left_total_cents": 11450,
+  "right_total_cents": 11950,
+  "matched_left_total_cents": 12450,
+  "matched_right_total_cents": 12450,
+  "unmatched_left_total_cents": -1000,
+  "unmatched_right_total_cents": -500,
+  "left_total": "114.50",
+  "right_total": "119.50",
+  "matched_left_total": "124.50",
+  "matched_right_total": "124.50",
+  "unmatched_left_total": "-10.00",
+  "unmatched_right_total": "-5.00"
+}

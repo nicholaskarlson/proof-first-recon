@@ -1,0 +1,4 @@
+id,left_date,left_amount,left_description,right_date,right_amount,right_description
+L001,2026-01-01,100.00,Deposit A,2026-01-01,100.00,Deposit A
+L002,2026-01-02,-25.50,Payment B,2026-01-02,-25.50,Payment B
+L004,2026-01-04,50.00,Refund,2026-01-04,50.00,Refund
