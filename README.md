@@ -21,13 +21,25 @@ A small command-line tool that reconciles **two CSV exports** (e.g., bank vs. le
 - **Testable:** fixtures + golden tests define “done”
 - **Handoff-friendly:** simple CLI + documented schemas (no maintenance trap)
 
-## Quick start (recommended)
+## Quick start
+
+### 1) Run tests (the acceptance gate)
 
 ```bash
 go test ./...
+```
 
-go run ./cmd/recon -mode help
-go run ./cmd/recon -mode demo -out ./out
+### 2) Run the demo fixture
+
+```bash
+go run ./cmd/recon demo --out ./out
+ls -la ./out
+```
+
+### 3) Reconcile your own CSVs
+
+```bash
+go run ./cmd/recon run --left path/to/left.csv --right path/to/right.csv --out ./out
 ```
 
 ### Optional convenience
@@ -37,25 +49,39 @@ make test
 make demo
 ```
 
-## Schemas
+## Input / output schemas
 
 - Inputs: `schemas/input_schema.md`
 - Outputs: `schemas/output_schema.md`
 
+## Safety: expected failure behavior
+
+This tool is designed to **fail fast** rather than guess:
+
+- Duplicate `id` values in a single file → error
+- Header mismatch → error
+- Amounts with more than 2 decimal places → error
+
+See: `fixtures/input_fail/` and `tests/failures_test.go`.
+
 ## Repo layout (overview)
 
-- `cmd/recon/` — CLI entrypoint
-- `internal/` — engine + validation + report writers *(planned)*
-- `fixtures/` — test inputs + expected outputs *(planned)*
-- `tests/` — golden tests + invariants *(planned)*
+- `cmd/recon/` — CLI entrypoint (`demo`, `run`)
+- `internal/core/` — reconciliation logic (no file I/O)
+- `internal/report/` — deterministic CSV/JSON writers
+- `internal/model/` — shared types (breaks import cycles cleanly)
+- `internal/ingest/` — CSV parsing + cents-safe money parsing
+- `fixtures/` — test inputs and golden expected outputs
+- `tests/` — golden test(s) + expected-failure tests
 
-## Status / next milestone
+## Status
 
-This repo is currently scaffolding. Next milestone:
+**v0 rule:** exact match on `id`.
 
-- Add a small fixture dataset (including duplicates and mismatches)
-- Implement `recon run` (v0: exact match by `id`)
-- Add golden tests so `go test ./...` verifies byte-stable outputs
+What’s already proven by tests:
+
+- Golden outputs match `fixtures/expected/*` byte-for-byte
+- Invalid inputs fail with clear errors (duplicate id, bad header, bad amount)
 
 ## License
 

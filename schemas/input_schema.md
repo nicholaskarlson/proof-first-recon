@@ -13,6 +13,13 @@ The first row must be exactly:
 - `amount` (decimal): signed amount with up to 2 decimal places (parsed as integer cents)
 - `description` (string): free text
 
+## Validation / errors (v0)
+This tool fails fast rather than guessing:
+
+- Duplicate `id` values in a single file → error
+- Header mismatch → error
+- Amount with more than 2 decimal places → error
+
 ## Notes
 - UTF-8 CSV.
 - LF line endings recommended (repo enforces LF via `.gitattributes`).
