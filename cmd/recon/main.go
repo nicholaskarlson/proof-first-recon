@@ -67,8 +67,8 @@ func demoCmd(args []string) {
 	outDir := fs.String("out", "./out", "output directory")
 	_ = fs.Parse(args)
 
-	leftPath := filepath.Join("fixtures", "input", "case01_left.csv")
-	rightPath := filepath.Join("fixtures", "input", "case01_right.csv")
+	leftPath := filepath.Join("fixtures", "input", "case01", "left.csv")
+	rightPath := filepath.Join("fixtures", "input", "case01", "right.csv")
 
 	if err := run(leftPath, rightPath, *outDir); err != nil {
 		fmt.Println("Error:", err)
