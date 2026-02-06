@@ -31,7 +31,7 @@ No database. No services. No Docker required.
 From repo root:
 
 ```bash
-go test ./...
+go test -count=1 ./...
 ```
 
 Or:
@@ -142,7 +142,7 @@ Golden fixtures define correctness. If you intentionally change behavior:
    ```
 3) Re-run tests:
    ```bash
-   go test ./...
+   go test -count=1 ./...
    ```
 4) Commit both the code change and the fixture update in the same PR.
 

@@ -1,7 +1,7 @@
 .PHONY: test demo build clean
 
 test:
-	go test ./...
+	go test -count=1 ./...
 
 demo:
 	go run ./cmd/recon demo --out ./out
