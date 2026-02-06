@@ -26,7 +26,7 @@ A small command-line tool that reconciles **two CSV exports** (e.g., bank vs. le
 ### 1) Run tests (the acceptance gate)
 
 ```bash
-go test ./...
+go test -count=1 ./...
 ```
 
 ### 2) Run the demo fixture
