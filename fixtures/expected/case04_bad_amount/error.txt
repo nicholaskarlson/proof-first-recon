@@ -1,0 +1,1 @@
+read left: row 2: invalid amount "1.234": more than 2 decimal places
