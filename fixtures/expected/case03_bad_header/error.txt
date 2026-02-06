@@ -1,0 +1,1 @@
+read left: header mismatch at column 3: want "amount" got "amt"

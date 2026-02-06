@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -8,41 +9,41 @@ import (
 	"github.com/nicholaskarlson/proof-first-recon/internal/core"
 )
 
-func TestFail_DuplicateID_Left(t *testing.T) {
+func TestExpectedFailCase02DupID(t *testing.T) {
 	t.Parallel()
-	left := filepath.Join("..", "fixtures", "input_fail", "dup_left.csv")
-	right := filepath.Join("..", "fixtures", "input_fail", "dup_right.csv")
-	_, _, _, err := core.ReconcileFromPaths(left, right)
-	if err == nil {
-		t.Fatalf("expected error, got nil")
-	}
-	if !strings.Contains(err.Error(), "duplicate id") {
-		t.Fatalf("expected duplicate id error, got: %v", err)
-	}
+	caseName := "case02_dup_id"
+	assertExpectedFailure(t, caseName)
 }
 
-func TestFail_BadHeader(t *testing.T) {
+func TestExpectedFailCase03BadHeader(t *testing.T) {
 	t.Parallel()
-	left := filepath.Join("..", "fixtures", "input_fail", "bad_header_left.csv")
-	right := filepath.Join("..", "fixtures", "input_fail", "bad_header_right.csv")
-	_, _, _, err := core.ReconcileFromPaths(left, right)
-	if err == nil {
-		t.Fatalf("expected error, got nil")
-	}
-	if !strings.Contains(err.Error(), "header") {
-		t.Fatalf("expected header error, got: %v", err)
-	}
+	caseName := "case03_bad_header"
+	assertExpectedFailure(t, caseName)
 }
 
-func TestFail_BadAmount(t *testing.T) {
+func TestExpectedFailCase04BadAmount(t *testing.T) {
 	t.Parallel()
-	left := filepath.Join("..", "fixtures", "input_fail", "bad_amount_left.csv")
-	right := filepath.Join("..", "fixtures", "input_fail", "bad_amount_right.csv")
-	_, _, _, err := core.ReconcileFromPaths(left, right)
-	if err == nil {
+	caseName := "case04_bad_amount"
+	assertExpectedFailure(t, caseName)
+}
+
+func assertExpectedFailure(t *testing.T, caseName string) {
+	left := filepath.Join("..", "fixtures", "input", caseName, "left.csv")
+	right := filepath.Join("..", "fixtures", "input", caseName, "right.csv")
+	expPath := filepath.Join("..", "fixtures", "expected", caseName, "error.txt")
+
+	expB, err := os.ReadFile(expPath)
+	if err != nil {
+		t.Fatalf("read expected error: %v", err)
+	}
+	exp := strings.TrimSpace(string(expB))
+
+	_, _, _, gotErr := core.ReconcileFromPaths(left, right)
+	if gotErr == nil {
 		t.Fatalf("expected error, got nil")
 	}
-	if !strings.Contains(err.Error(), "decimal") {
-		t.Fatalf("expected decimal error, got: %v", err)
+	got := strings.TrimSpace(gotErr.Error())
+	if got != exp {
+		t.Fatalf("error mismatch\n got: %s\n exp: %s", got, exp)
 	}
 }

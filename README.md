@@ -62,7 +62,7 @@ This tool is designed to **fail fast** rather than guess:
 - Header mismatch → error
 - Amounts with more than 2 decimal places → error
 
-See: `fixtures/input_fail/` and `tests/failures_test.go`.
+See: `fixtures/input/case02_dup_id/`, `case03_bad_header/`, `case04_bad_amount/` and `fixtures/expected/<case>/error.txt` (enforced by `tests/failures_test.go`).
 
 ## Repo layout (overview)
 

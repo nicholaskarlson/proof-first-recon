@@ -1,0 +1,1 @@
+read left: row 3: duplicate id "D001"

@@ -82,7 +82,7 @@ The tool rejects inputs rather than guessing:
 - Header mismatch → **error**
 - Amount with more than 2 decimal places → **error**
 
-Examples live in `fixtures/input_fail/` and are enforced by `tests/failures_test.go`.
+Examples live in `fixtures/input/<case>/` with expected errors in `fixtures/expected/<case>/error.txt` (enforced by `tests/failures_test.go`).
 
 ---
 
