@@ -1,9 +1,9 @@
 package report
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
-	"os"
 
 	"github.com/nicholaskarlson/proof-first-recon/internal/ingest"
 	"github.com/nicholaskarlson/proof-first-recon/internal/model"
@@ -59,13 +59,9 @@ func WriteAll(paths OutputPaths, left, right []ingest.Record, res model.Result) 
 }
 
 func writeUnmatched(path string, rows []ingest.Record) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+	var buf bytes.Buffer
+	w := csv.NewWriter(&buf)
 
-	w := csv.NewWriter(f)
 	if err := w.Write([]string{"id", "date", "amount", "description"}); err != nil {
 		return err
 	}
@@ -75,17 +71,16 @@ func writeUnmatched(path string, rows []ingest.Record) error {
 		}
 	}
 	w.Flush()
-	return w.Error()
+	if err := w.Error(); err != nil {
+		return err
+	}
+	return writeFileAtomic(path, buf.Bytes(), 0o644)
 }
 
 func writeMatched(path string, rows []model.Matched) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+	var buf bytes.Buffer
+	w := csv.NewWriter(&buf)
 
-	w := csv.NewWriter(f)
 	if err := w.Write([]string{
 		"id",
 		"left_date", "left_amount", "left_description",
@@ -104,7 +99,10 @@ func writeMatched(path string, rows []model.Matched) error {
 		}
 	}
 	w.Flush()
-	return w.Error()
+	if err := w.Error(); err != nil {
+		return err
+	}
+	return writeFileAtomic(path, buf.Bytes(), 0o644)
 }
 
 func writeSummary(path string, left, right []ingest.Record, res model.Result) error {
@@ -152,7 +150,7 @@ func writeSummary(path string, left, right []ingest.Record, res model.Result) er
 		return err
 	}
 	b = append(b, '\n')
-	return os.WriteFile(path, b, 0o644)
+	return writeFileAtomic(path, b, 0o644)
 }
 
 func total(rows []ingest.Record) int64 {
