@@ -13,8 +13,8 @@ import (
 func TestGoldenCase01(t *testing.T) {
 	t.Parallel()
 
-	leftPath := filepath.Join("..", "fixtures", "input", "case01_left.csv")
-	rightPath := filepath.Join("..", "fixtures", "input", "case01_right.csv")
+	leftPath := filepath.Join("..", "fixtures", "input", "case01", "left.csv")
+	rightPath := filepath.Join("..", "fixtures", "input", "case01", "right.csv")
 	expectedDir := filepath.Join("..", "fixtures", "expected", "case01")
 
 	outDir := t.TempDir()
