@@ -1,10 +1,13 @@
-.PHONY: test demo build clean
+.PHONY: test demo verify build clean
 
 test:
 	go test -count=1 ./...
 
 demo:
 	go run ./cmd/recon demo --out ./out
+
+# Book-facing proof gate: tests + demo fixture verification
+verify: test demo
 
 build:
 	mkdir -p bin

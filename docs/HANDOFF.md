@@ -26,6 +26,17 @@ No database. No services. No Docker required.
 
 ---
 
+## Canonical commands
+
+```bash
+# Proof gate (one command)
+make verify
+
+# Proof gates (portable, no Makefile)
+go test -count=1 ./...
+go run ./cmd/recon demo --out ./out
+```
+
 ## How to validate (the acceptance gate)
 
 From repo root:
