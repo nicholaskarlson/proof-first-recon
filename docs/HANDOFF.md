@@ -53,6 +53,14 @@ go run ./cmd/recon demo --out ./out
 ls -la ./out
 ```
 
+### Optional: Python check (stdlib only)
+
+```bash
+python3 examples/python/verify_recon_case.py
+```
+
+This is an independent verification lane (no third-party deps).
+
 ### Your own files
 
 ```bash
