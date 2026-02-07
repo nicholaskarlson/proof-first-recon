@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"os"
@@ -74,8 +75,13 @@ func demoCmd(args []string) {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	fmt.Println("Demo complete. Wrote outputs to", *outDir)
+	if err := verifyDemoOutputs(*outDir); err != nil {
+		fmt.Println("MISMATCH:", err)
+		os.Exit(1)
+	}
+	fmt.Println("OK: demo outputs match fixtures (case01)")
 }
+
 
 func run(leftPath, rightPath, outDir string) error {
 	left, right, res, err := core.ReconcileFromPaths(leftPath, rightPath)
@@ -95,4 +101,25 @@ func run(leftPath, rightPath, outDir string) error {
 	}
 
 	return report.WriteAll(paths, left, right, res)
+}
+
+func verifyDemoOutputs(outDir string) error {
+	expDir := filepath.Join("fixtures", "expected", "case01")
+	files := []string{"matched.csv", "unmatched_left.csv", "unmatched_right.csv", "recon_summary.json"}
+	for _, name := range files {
+		expPath := filepath.Join(expDir, name)
+		gotPath := filepath.Join(outDir, name)
+		exp, err := os.ReadFile(expPath)
+		if err != nil {
+			return fmt.Errorf("read expected %s: %w", name, err)
+		}
+		got, err := os.ReadFile(gotPath)
+		if err != nil {
+			return fmt.Errorf("read output %s: %w", name, err)
+		}
+		if !bytes.Equal(got, exp) {
+			return fmt.Errorf("%s differs from fixtures/expected/case01/%s", name, name)
+		}
+	}
+	return nil
 }

@@ -21,32 +21,25 @@ A small command-line tool that reconciles **two CSV exports** (e.g., bank vs. le
 - **Testable:** fixtures + golden tests define “done”
 - **Handoff-friendly:** simple CLI + documented schemas (no maintenance trap)
 
-## Quick start
-
-### 1) Run tests (the acceptance gate)
+## Canonical commands
 
 ```bash
+# Proof gate (one command)
+make verify
+
+# Proof gates (portable, no Makefile)
 go test -count=1 ./...
-```
-
-### 2) Run the demo fixture
-
-```bash
 go run ./cmd/recon demo --out ./out
-ls -la ./out
 ```
 
-### 3) Reconcile your own CSVs
+## Usage
 
 ```bash
+# Demo (writes outputs and verifies they match fixtures)
+go run ./cmd/recon demo --out ./out
+
+# Reconcile your own files
 go run ./cmd/recon run --left path/to/left.csv --right path/to/right.csv --out ./out
-```
-
-### Optional convenience
-
-```bash
-make test
-make demo
 ```
 
 ## Input / output schemas
