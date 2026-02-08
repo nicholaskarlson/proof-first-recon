@@ -35,7 +35,7 @@ def main() -> None:
     repo = Path(".")
     case = "case01"
 
-    out_dir = repo / "out"
+    out_dir = repo / "out" / case
     exp_dir = repo / "fixtures" / "expected" / case
 
     matched = read_csv_dicts(out_dir / "matched.csv")

@@ -57,11 +57,11 @@ If tests pass, the tool’s behavior matches the checked-in fixtures.
 
 ## How to run
 
-### Demo (uses built-in fixture case)
+### Demo (recomputes fixtures and verifies outputs match goldens)
 
 ```bash
 go run ./cmd/recon demo --out ./out
-ls -la ./out
+ls -la ./out/case01
 ```
 
 ### Optional: Python check (stdlib only)
@@ -156,8 +156,8 @@ Golden fixtures define correctness. If you intentionally change behavior:
    ```
 2) Update expected fixtures intentionally:
    ```bash
-   cp -f out/*.csv fixtures/expected/case01/
-   cp -f out/recon_summary.json fixtures/expected/case01/
+   cp -f out/case01/*.csv fixtures/expected/case01/
+   cp -f out/case01/recon_summary.json fixtures/expected/case01/
    ```
 3) Re-run tests:
    ```bash

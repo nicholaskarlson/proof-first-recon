@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/nicholaskarlson/proof-first-recon/internal/core"
 	"github.com/nicholaskarlson/proof-first-recon/internal/report"
@@ -65,23 +66,75 @@ func runCmd(args []string) {
 
 func demoCmd(args []string) {
 	fs := flag.NewFlagSet("demo", flag.ExitOnError)
-	outDir := fs.String("out", "./out", "output directory")
+	outRoot := fs.String("out", "./out", "output directory")
 	_ = fs.Parse(args)
 
-	leftPath := filepath.Join("fixtures", "input", "case01", "left.csv")
-	rightPath := filepath.Join("fixtures", "input", "case01", "right.csv")
-
-	if err := run(leftPath, rightPath, *outDir); err != nil {
+	inRoot := filepath.Join("fixtures", "input")
+	entries, err := os.ReadDir(inRoot)
+	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	if err := verifyDemoOutputs(*outDir); err != nil {
-		fmt.Println("MISMATCH:", err)
+
+	cases := make([]string, 0, len(entries))
+	for _, e := range entries {
+		if e.IsDir() {
+			cases = append(cases, e.Name())
+		}
+	}
+	sort.Strings(cases)
+	if len(cases) == 0 {
+		fmt.Println("Error: no fixture cases found under", inRoot)
 		os.Exit(1)
 	}
-	fmt.Println("OK: demo outputs match fixtures (case01)")
-}
 
+	for _, c := range cases {
+		leftPath := filepath.Join(inRoot, c, "left.csv")
+		rightPath := filepath.Join(inRoot, c, "right.csv")
+		expDir := filepath.Join("fixtures", "expected", c)
+		outDir := filepath.Join(*outRoot, c)
+
+		_ = os.RemoveAll(outDir)
+
+		wantErrPath := filepath.Join(expDir, "error.txt")
+		if wantErr, errRead := os.ReadFile(wantErrPath); errRead == nil {
+			// expected-fail case: error text must match fixtures/expected/<case>/error.txt byte-for-byte.
+			_, _, _, gotErr := core.ReconcileFromPaths(leftPath, rightPath)
+			if gotErr == nil {
+				fmt.Printf("MISMATCH: %s expected failure but got success\n", c)
+				os.Exit(1)
+			}
+			gotErrB := []byte(gotErr.Error() + "\n")
+			if err := os.MkdirAll(outDir, 0o755); err != nil {
+				fmt.Println("Error:", err)
+				os.Exit(1)
+			}
+			if err := os.WriteFile(filepath.Join(outDir, "error.txt"), gotErrB, 0o644); err != nil {
+				fmt.Println("Error:", err)
+				os.Exit(1)
+			}
+			if !bytes.Equal(gotErrB, wantErr) {
+				fmt.Printf("MISMATCH: %s (error.txt)\n", c)
+				os.Exit(1)
+			}
+			continue
+		} else if errRead != nil && !os.IsNotExist(errRead) {
+			fmt.Println("Error:", errRead)
+			os.Exit(1)
+		}
+
+		if err := run(leftPath, rightPath, outDir); err != nil {
+			fmt.Printf("Error: %s: %v\n", c, err)
+			os.Exit(1)
+		}
+		if err := verifyCaseOutputs(c, outDir); err != nil {
+			fmt.Println("MISMATCH:", err)
+			os.Exit(1)
+		}
+	}
+
+	fmt.Printf("OK: demo outputs match fixtures (%d case(s))\n", len(cases))
+}
 
 func run(leftPath, rightPath, outDir string) error {
 	left, right, res, err := core.ReconcileFromPaths(leftPath, rightPath)
@@ -103,22 +156,22 @@ func run(leftPath, rightPath, outDir string) error {
 	return report.WriteAll(paths, left, right, res)
 }
 
-func verifyDemoOutputs(outDir string) error {
-	expDir := filepath.Join("fixtures", "expected", "case01")
+func verifyCaseOutputs(caseName, outDir string) error {
+	expDir := filepath.Join("fixtures", "expected", caseName)
 	files := []string{"matched.csv", "unmatched_left.csv", "unmatched_right.csv", "recon_summary.json"}
 	for _, name := range files {
 		expPath := filepath.Join(expDir, name)
 		gotPath := filepath.Join(outDir, name)
 		exp, err := os.ReadFile(expPath)
 		if err != nil {
-			return fmt.Errorf("read expected %s: %w", name, err)
+			return fmt.Errorf("%s: read expected %s: %w", caseName, name, err)
 		}
 		got, err := os.ReadFile(gotPath)
 		if err != nil {
-			return fmt.Errorf("read output %s: %w", name, err)
+			return fmt.Errorf("%s: read output %s: %w", caseName, name, err)
 		}
 		if !bytes.Equal(got, exp) {
-			return fmt.Errorf("%s differs from fixtures/expected/case01/%s", name, name)
+			return fmt.Errorf("%s: %s mismatch", caseName, name)
 		}
 	}
 	return nil

@@ -35,8 +35,9 @@ go run ./cmd/recon demo --out ./out
 ## Usage
 
 ```bash
-# Demo (writes outputs and verifies they match fixtures)
+# Demo (recomputes fixtures and verifies outputs match goldens)
 go run ./cmd/recon demo --out ./out
+# outputs land in ./out/<case>/ (e.g., ./out/case01/)
 
 # Reconcile your own files
 go run ./cmd/recon run --left path/to/left.csv --right path/to/right.csv --out ./out
