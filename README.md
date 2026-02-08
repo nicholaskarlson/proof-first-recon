@@ -37,7 +37,7 @@ go run ./cmd/recon demo --out ./out
 ```bash
 # Demo (recomputes fixtures and verifies outputs match goldens)
 go run ./cmd/recon demo --out ./out
-# outputs land in ./out/<case>/ (e.g., ./out/case01/)
+# outputs land in ./out/CASE/ (e.g., ./out/case01/)
 
 # Reconcile your own files
 go run ./cmd/recon run --left path/to/left.csv --right path/to/right.csv --out ./out
@@ -56,7 +56,7 @@ This tool is designed to **fail fast** rather than guess:
 - Header mismatch → error
 - Amounts with more than 2 decimal places → error
 
-See: `fixtures/input/case02_dup_id/`, `case03_bad_header/`, `case04_bad_amount/` and `fixtures/expected/<case>/error.txt` (enforced by `tests/failures_test.go`).
+See: `fixtures/input/case02_dup_id/`, `case03_bad_header/`, `case04_bad_amount/` and `fixtures/expected/CASE/error.txt` (enforced by `tests/failures_test.go`).
 
 ## Repo layout (overview)
 
